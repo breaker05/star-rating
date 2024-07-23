@@ -6,9 +6,22 @@ interface StarRatingProps {
   // add others here like types of stars, color, etc.
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ maxRating, onRatingChange }) => {
-  const [rating, setRating] = useState(0);
+// pass these down as a prop or import them from a shared file location
+const ratingValues = [
+  { label: 'Very Dissatisfied', value: 1, color: 'red' },
+  { label: 'Dissatisfied', value: 2, color: 'orange' },
+  { label: 'Neutral', value: 3, color: 'yellow' },
+  { label: 'Satisfied', value: 4, color: 'lightgreen' },
+  { label: 'Very Satisfied', value: 5, color: 'green' },
+];
+
+const StarRating: React.FC<StarRatingProps> = ({ onRatingChange }) => {
+  const [rating, setRating] = useState(-1);
   
+  // assumes linear scale from 1 to n
+  const startValue = ratingValues[0].value;
+  const endValue = ratingValues[ratingValues.length - 1].value;
+
   useEffect(() => {
     onRatingChange(rating);
   }, [rating, onRatingChange]);
@@ -18,27 +31,32 @@ const StarRating: React.FC<StarRatingProps> = ({ maxRating, onRatingChange }) =>
   };
 
   return (
-    <div>
-      <label htmlFor="starRating">Rate:</label>
+    <div style={{ width: 200, margin: 'auto' }}>
       <input
         type="range"
         id="starRating"
         name="starRating"
-        min="0"
-        max={maxRating}
+        min={startValue}
+        max={endValue}
         value={rating}
         onChange={handleChange}
         list="starRatingList"
       />
       <datalist id="starRatingList">
-        {[...Array(maxRating + 1)].map((_, index) => (
+        {ratingValues.map((ratingValue) => (
+          <option key={ratingValue.value} value={ratingValue.value} label={ratingValue.label} style={{ color: ratingValue.color }}>
+            {ratingValue.label}
+          </option>
+        ))}
+        
+        {/* OR hardcoded 1 to n {[...Array(maxRating + 1)].map((_, index) => (
           <option key={index} value={index} label={`${index} star${index !== 1 ? 's' : ''}`}>
             {index}
           </option>
-        ))}
+        ))} */}
       </datalist>
       <div aria-live="polite" aria-atomic="true">
-        {`${rating} star${rating !== 1 ? 's' : ''}`}
+        {rating !== -1 && `${rating} ${ratingValues.find((value) => value.value === rating)?.label}`}
       </div>
     </div>
   );
