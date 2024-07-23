@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 interface StarRatingProps {
   maxRating: number;
   onRatingChange: (rating: number) => void;
+  // add others here like types of stars, color, etc.
 }
 
 const StarRating: React.FC<StarRatingProps> = ({ maxRating, onRatingChange }) => {
